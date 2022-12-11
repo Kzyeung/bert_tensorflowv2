@@ -824,12 +824,12 @@ def transformer_model(input_tensor,
 
   all_layer_outputs = []
   for layer_idx in range(num_hidden_layers):
-    with tf.variable_scope("layer_%d" % layer_idx):
+    with tf.compat.v1.variable_scope("layer_%d" % layer_idx):
       layer_input = prev_output
 
-      with tf.variable_scope("attention"):
+      with tf.compat.v1.variable_scope("attention"):
         attention_heads = []
-        with tf.variable_scope("self"):
+        with tf.compat.v1.variable_scope("self"):
           attention_head = attention_layer(
               from_tensor=layer_input,
               to_tensor=layer_input,
@@ -854,7 +854,7 @@ def transformer_model(input_tensor,
 
         # Run a linear projection of `hidden_size` then add a residual
         # with `layer_input`.
-        with tf.variable_scope("output"):
+        with tf.compat.v1.variable_scope("output"):
           attention_output = tf.layers.dense(
               attention_output,
               hidden_size,
@@ -863,7 +863,7 @@ def transformer_model(input_tensor,
           attention_output = layer_norm(attention_output + layer_input)
 
       # The activation is only applied to the "intermediate" hidden layer.
-      with tf.variable_scope("intermediate"):
+      with tf.compat.v1.variable_scope("intermediate"):
         intermediate_output = tf.layers.dense(
             attention_output,
             intermediate_size,
@@ -871,7 +871,7 @@ def transformer_model(input_tensor,
             kernel_initializer=create_initializer(initializer_range))
 
       # Down-project back to `hidden_size` then add the residual.
-      with tf.variable_scope("output"):
+      with tf.compat.v1.variable_scope("output"):
         layer_output = tf.layers.dense(
             intermediate_output,
             hidden_size,
@@ -979,7 +979,7 @@ def assert_rank(tensor, expected_rank, name=None):
 
   actual_rank = tensor.shape.ndims
   if actual_rank not in expected_rank_dict:
-    scope_name = tf.get_variable_scope().name
+    scope_name = tf.compat.v1.get_variable_scope().name
     raise ValueError(
         "For the tensor `%s` in scope `%s`, the actual rank "
         "`%d` (shape = %s) is not equal to the expected rank `%s`" %
