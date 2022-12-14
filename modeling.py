@@ -121,7 +121,7 @@ class BertModel(object):
   model = modeling.BertModel(config=config, is_training=True,
     input_ids=input_ids, input_mask=input_mask, token_type_ids=token_type_ids)
 
-  label_embeddings = tf.get_variable(...)
+  label_embeddings = tf.compat.v1.get_variable(...)
   pooled_output = model.get_pooled_output()
   logits = tf.matmul(pooled_output, label_embeddings)
   ...
@@ -473,7 +473,7 @@ def embedding_postprocessor(input_tensor,
     if token_type_ids is None:
       raise ValueError("`token_type_ids` must be specified if"
                        "`use_token_type` is True.")
-    token_type_table = tf.get_variable(
+    token_type_table = tf.compat.v1.get_variable(
         name=token_type_embedding_name,
         shape=[token_type_vocab_size, width],
         initializer=create_initializer(initializer_range))
@@ -489,7 +489,7 @@ def embedding_postprocessor(input_tensor,
   if use_position_embeddings:
     assert_op = tf.assert_less_equal(seq_length, max_position_embeddings)
     with tf.control_dependencies([assert_op]):
-      full_position_embeddings = tf.get_variable(
+      full_position_embeddings = tf.compat.v1.get_variable(
           name=position_embedding_name,
           shape=[max_position_embeddings, width],
           initializer=create_initializer(initializer_range))
